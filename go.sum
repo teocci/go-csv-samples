@@ -1,0 +1,12 @@
+github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8 h1:hp1oqdzmv37vPLYFGjuM/RmUgUMfD9vQfMszc54l55Y=
+github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8/go.mod h1:5YoVOkjYAQumqlV356Hj3xeYh4BdZuLE0/nRkf2NKkI=
+github.com/google/go-cmp v0.4.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+github.com/jszwec/csvutil v1.5.0 h1:ErLnF1Qzzt9svk8CUY7CyLl/W9eET+KWPIZWkE1o6JM=
+github.com/jszwec/csvutil v1.5.0/go.mod h1:Rpu7Uu9giO9subDyMCIQfHVDuLrcaC36UA4YcJjGBkg=
+github.com/yunabe/easycsv v0.0.2 h1:71t6MV9+p0lO7POEFU6z3BkzQAlDAN4dO3AzllRhbdo=
+github.com/yunabe/easycsv v0.0.2/go.mod h1:JFAbAhLlYGYizG1HqSz+UNxU5bKEk65MXu2VXgFuNNQ=
+golang.org/x/sync v0.0.0-20210220032951-036812b2e83c h1:5KslGYwFpkhGh+Q16bwMP3cOontH8FOep7tGV86Y7SQ=
+golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+trimmer.io/go-csv v0.0.0-20200711153937-212a98e14c36 h1:tQ6C+l0j+ALUnklQ2X0xyX2xAaN7Uc7CjFZ7X3XwjUY=
+trimmer.io/go-csv v0.0.0-20200711153937-212a98e14c36/go.mod h1:fDmF1cV5Sq2/eAJVvIqEOb5VD8CXsY02V61G6rWSm2o=
