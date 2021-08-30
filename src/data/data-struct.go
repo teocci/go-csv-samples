@@ -4,7 +4,6 @@
 package data
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -29,14 +28,14 @@ type FCC struct {
 }
 
 type RTT struct {
-	DroneID         int     `json:"drone_id" csv:"drone_id" name:"drone_id"`
+	DroneID         int     `json:"id" csv:"id" name:"id"`
 	FlightSessionID int     `json:"flight_session_id" csv:"flight_session_id" name:"flight_session_id"`
-	DroneLat        float32 `json:"drone_lat" csv:"drone_lat" name:"drone_lat"`
-	DroneLong       float32 `json:"drone_long" csv:"drone_lat" name:"drone_lat"`
-	DroneAlt        float32 `json:"drone_alt" csv:"drone_lat" name:"drone_lat"`
-	DroneRoll       float32 `json:"drone_roll" csv:"drone_lat" name:"drone_lat"`
-	DronePitch      float32 `json:"drone_pitch" csv:"drone_lat" name:"drone_lat"`
-	DroneYaw        float32 `json:"drone_yaw" csv:"drone_lat" name:"drone_lat"`
+	Lat             float32 `json:"lat" csv:"lat" name:"lat"`
+	Long            float32 `json:"long" csv:"lat" name:"lat"`
+	Alt             float32 `json:"alt" csv:"lat" name:"lat"`
+	Roll            float32 `json:"roll" csv:"lat" name:"lat"`
+	Pitch           float32 `json:"pitch" csv:"lat" name:"lat"`
+	Yaw             float32 `json:"yaw" csv:"lat" name:"lat"`
 	BatVoltage      float32 `json:"battery_voltage" csv:"battery_voltage" name:"battery_voltage"`
 	BatCurrent      float32 `json:"battery_current" csv:"battery_current" name:"battery_current"`
 	BatPercent      float32 `json:"battery_percentage" csv:"battery_percentage" name:"battery_percentage"`
@@ -45,7 +44,7 @@ type RTT struct {
 	GPSTime         float32 `json:"modify_date" csv:"modify_date" name:"modify_date"`
 }
 
-func ParseGEODataStruct(data []string) *GEOData {
+func ParseGEOData(data []string) *GEOData {
 	fccTime, _ := strconv.ParseFloat(data[0], 64)
 	lat, _ := strconv.ParseFloat(data[1], 64)
 	long, _ := strconv.ParseFloat(data[2], 64)
@@ -53,8 +52,6 @@ func ParseGEODataStruct(data []string) *GEOData {
 	roll, _ := strconv.ParseFloat(data[4], 64)
 	pitch, _ := strconv.ParseFloat(data[5], 64)
 	yaw, _ := strconv.ParseFloat(data[6], 64)
-
-	fmt.Printf("%+v\n", lat)
 
 	return &GEOData{
 		FCCTime: float32(fccTime),
@@ -67,7 +64,7 @@ func ParseGEODataStruct(data []string) *GEOData {
 	}
 }
 
-func ParseFCCStruct(data []string) *FCC {
+func ParseFCC(data []string) *FCC {
 	fccTime, _ := strconv.ParseFloat(data[0], 64)
 	gpsTime, _ := strconv.ParseFloat(data[1], 64)
 	temp, _ := strconv.ParseFloat(data[2], 64)
@@ -84,5 +81,39 @@ func ParseFCCStruct(data []string) *FCC {
 		BatCurrent:     float32(batCurr),
 		BatPercent:     float32(batPct),
 		BatTemperature: float32(batTemp),
+	}
+}
+
+func ParseRTT(data []string) *RTT {
+	droneID, _ := strconv.Atoi(data[1])
+	sessionID, _ := strconv.Atoi(data[2])
+	lat, _ := strconv.ParseFloat(data[3], 64)
+	long, _ := strconv.ParseFloat(data[4], 64)
+	alt, _ := strconv.ParseFloat(data[5], 64)
+	roll, _ := strconv.ParseFloat(data[6], 64)
+	pitch, _ := strconv.ParseFloat(data[7], 64)
+	yaw, _ := strconv.ParseFloat(data[8], 64)
+	temp, _ := strconv.ParseFloat(data[9], 64)
+	batVol, _ := strconv.ParseFloat(data[10], 64)
+	batCurr, _ := strconv.ParseFloat(data[11], 64)
+	batPct, _ := strconv.ParseFloat(data[12], 64)
+	batTemp, _ := strconv.ParseFloat(data[13], 64)
+	gpsTime, _ := strconv.ParseFloat(data[14], 64)
+
+	return &RTT{
+		DroneID:         droneID,
+		FlightSessionID: sessionID,
+		Lat:             float32(lat),
+		Long:            float32(long),
+		Alt:             float32(alt),
+		Roll:            float32(roll),
+		Pitch:           float32(pitch),
+		Yaw:             float32(yaw),
+		BatVoltage:      float32(batVol),
+		BatCurrent:      float32(batCurr),
+		BatPercent:      float32(batPct),
+		BatTemperature:  float32(batTemp),
+		Temperature:     float32(temp),
+		GPSTime:         float32(gpsTime),
 	}
 }

@@ -6,9 +6,9 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
+	"github.com/teocci/go-csv-samples/src/csvmgr"
 	"io"
 	"log"
-	"os"
 	"path/filepath"
 	"sync"
 
@@ -40,20 +40,20 @@ func main() {
 	defer waitTilEnd()()
 
 	// open the first file
-	base := loadData(geoPath)
-	defer closeFile()(base)
+	base := csvmgr.OpenFile(geoPath)
+	defer csvmgr.CloseFile()(base)
 
 	// open second file
-	fcc := loadData(fccPath)
-	defer closeFile()(fcc)
+	fcc := csvmgr.OpenFile(fccPath)
+	defer csvmgr.CloseFile()(fcc)
 
 	// create a file writer
 	rttFN := rttPrefix + "_RTTdata"
 	fmt.Println("rttFN:", rttFN)
 	rttPath := filepath.Join(destPath, rttFN+".csv")
 
-	w := createFile(rttPath)
-	defer closeFile()(w)
+	w := csvmgr.CreateFile(rttPath)
+	defer csvmgr.CloseFile()(w)
 
 	// wrap the file readers with CSV readers
 	bReader := csv.NewReader(base)
@@ -229,32 +229,4 @@ func waitTilEnd() func() {
 		wg.Wait()
 		fmt.Println("File processed.")
 	}
-}
-
-func closeFile() func(f *os.File) {
-	return func(f *os.File) {
-		fmt.Println("Defer: closing file.")
-		err := f.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-}
-
-func loadData(f string) *os.File {
-	file, err := os.Open(f)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return file
-}
-
-func createFile(f string) *os.File {
-	w, err := os.Create(f)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return w
 }

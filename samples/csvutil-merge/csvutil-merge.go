@@ -4,11 +4,10 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
+	"github.com/teocci/go-csv-samples/src/csvmgr"
 	"log"
 	"math"
-	"os"
 	"path/filepath"
 	"time"
 
@@ -19,14 +18,14 @@ import (
 func main() {
 	var geos []data.GEOData
 	// open the first file
-	geoBuff := loadDataBuff(data.GEOPath)
+	geoBuff := csvmgr.LoadDataBuff(data.GEOPath)
 	if err := gocsv.UnmarshalBytes(geoBuff, &geos); err != nil {
 		log.Fatal(err)
 	}
 
 	var fccs []data.FCC
 	// open the first file
-	fccBuff := loadDataBuff(data.FCCPath)
+	fccBuff := csvmgr.LoadDataBuff(data.FCCPath)
 	if err := gocsv.UnmarshalBytes(fccBuff, &fccs); err != nil {
 		log.Fatal(err)
 	}
@@ -38,8 +37,8 @@ func main() {
 	rttPath := filepath.Join(data.DestPath, rttFN+".csv")
 	_ = rtts
 
-	w := createFile(rttPath)
-	defer closeFile()(w)
+	w := csvmgr.CreateFile(rttPath)
+	defer csvmgr.CloseFile()(w)
 
 	for _, geo := range geos {
 		var last int
@@ -76,39 +75,4 @@ func main() {
 	}
 
 
-}
-
-
-func closeFile() func(f *os.File) {
-	return func(f *os.File) {
-		fmt.Println("Defer: closing file.")
-		err := f.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-}
-
-func loadDataBuff(f string) []byte {
-	file, err := os.Open(f)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer closeFile()(file)
-
-	buf := new(bytes.Buffer)
-	if _, err = buf.ReadFrom(file); err != nil {
-		panic(err)
-	}
-
-	return buf.Bytes()
-}
-
-func createFile(f string) *os.File {
-	w, err := os.Create(f)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return w
 }

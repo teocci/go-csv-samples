@@ -6,10 +6,10 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
+	"github.com/teocci/go-csv-samples/src/csvmgr"
 	"io"
-	"log"
-	"os"
 	"runtime"
+	"strings"
 	"sync"
 
 	"github.com/teocci/go-csv-samples/src/data"
@@ -22,8 +22,8 @@ func main() {
 // with Worker pools
 func initProcess() {
 	// open the first file
-	base := loadData(data.GEOPath)
-	defer closeFile()(base)
+	base := csvmgr.OpenFile(data.GEOPath)
+	defer csvmgr.CloseFile()(base)
 
 	csvReader := csv.NewReader(base)
 	geos := make([]*data.GEOData, 0)
@@ -41,7 +41,7 @@ func initProcess() {
 					return
 				}
 
-				results <- data.ParseGEODataStruct(job)
+				results <- data.ParseGEOData(job)
 			}
 		}
 	}
@@ -66,6 +66,10 @@ func initProcess() {
 				fmt.Println("ERROR: ", err.Error())
 				break
 			}
+			for i, s := range rStr{
+				rStr[i] = strings.Trim(s, " ")
+			}
+
 			jobs <- rStr
 		}
 		close(jobs) // close jobs to signal workers that no more job are incoming.
@@ -87,33 +91,4 @@ func initProcess() {
 	}
 
 	fmt.Println("Count Concurrent ", len(geos))
-}
-
-
-func closeFile() func(f *os.File) {
-	return func(f *os.File) {
-		fmt.Println("Defer: closing file.")
-		err := f.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-}
-
-func loadData(f string) *os.File {
-	file, err := os.Open(f)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return file
-}
-
-func createFile(f string) *os.File {
-	w, err := os.Create(f)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return w
 }

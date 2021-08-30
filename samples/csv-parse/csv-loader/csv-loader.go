@@ -6,11 +6,12 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
-	"github.com/teocci/go-csv-samples/src/data"
 	"io"
 	"log"
 	"os"
 	"sync"
+
+	"github.com/teocci/go-csv-samples/src/data"
 )
 
 var (
@@ -48,13 +49,12 @@ func initProcess() {
 			log.Fatal(err) // sorry for the panic
 		}
 
-		process(rec, true)
+		process(rec)
 	}
 }
 
-func process(rec []string, first bool) {
-	l := len(rec)
-	part := rec[l-1]
+func process(rec []string) {
+	part := rec[0]
 
 	if c, ok := workers[part]; ok {
 		// send rec to worker
@@ -67,14 +67,14 @@ func process(rec []string, first bool) {
 		workers[part] = nc
 
 		// start worker with this chan
-		go worker(nc, first)
+		go worker(nc)
 
 		// send rec to worker via chan
 		nc <- rec
 	}
 }
 
-func worker(c chan []string, first bool) {
+func worker(c chan []string) {
 	// wg.Done signals to main worker completion
 	wg.Add(1)
 	defer wg.Done()
@@ -95,10 +95,12 @@ func worker(c chan []string, first bool) {
 			// locks ensures sequential printing
 			// not a required for independent files
 			mu.Lock()
+			var i int
 			for _, p := range part {
-				if first {
-					fmt.Printf("%+v\n", p)
+				if i < 10 {
+					fmt.Printf("%d -> %+v\n", i, p)
 				}
+				i = i + 1
 			}
 			mu.Unlock()
 
