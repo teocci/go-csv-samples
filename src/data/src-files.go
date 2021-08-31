@@ -11,6 +11,9 @@ const (
 	GEOPath = "./tmp/GEOdata.csv"
 	FCCPath = "./tmp/FCC.csv"
 
+	GEODatPath = "./tmp/GEOdata.dat"
+	FCCDatPath = "./tmp/FCC.dat"
+
 	DestPath = "./tmp"
 	RTTPrefix = "01"
 )

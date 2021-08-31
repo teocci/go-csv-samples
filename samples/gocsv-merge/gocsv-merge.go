@@ -25,16 +25,43 @@ var (
 )
 
 func main() {
+	geoPath := data.GEOPath
+	fccPath := data.FCCPath
+
 	var geos []data.GEOData
 	// open the first file
-	geoBuff := csvmgr.LoadDataBuff(data.GEOPath)
+	geoBuff := csvmgr.LoadDataBuff(geoPath)
+
+	//fmt.Println("data.GEODatPath:", geoPath)
+	//if filepath.Ext(geoPath) == ".dat" {
+	//	gocsv.TagSeparator = " "
+	//} else {
+	//	gocsv.TagSeparator = ","
+	//}
+
+
 	if err := gocsv.UnmarshalBytes(geoBuff, &geos); err != nil {
-		log.Fatal(err)
+		log.Fatal(geoPath, err)
+	}
+	for i, rec := range geos {
+		if i < 50 {
+			fmt.Printf("%#v\n", rec)
+		}
 	}
 
 	var fccs []data.FCC
 	// open the first file
-	fccBuff := csvmgr.LoadDataBuff(data.FCCPath)
+	fccBuff := csvmgr.LoadDataBuff(fccPath)
+	//gocsv.SetCSVReader(func(in io.Reader) gocsv.CSVReader {
+	//	r := csv.NewReader(in)
+	//	if filepath.Ext(fccPath) == "dat" {
+	//		r.Comma = ' '
+	//	} else {
+	//		r.Comma = ','
+	//	}
+	//
+	//	return r
+	//})
 	if err := gocsv.UnmarshalBytes(fccBuff, &fccs); err != nil {
 		log.Fatal(err)
 	}
@@ -52,7 +79,7 @@ func main() {
 	db = model.Setup()
 	defer db.Close()
 
-	baseFSTime = timemgr.GenBaseDate()
+	baseFSTime = timemgr.GenBaseDate(1)
 	baseFCCTime = timemgr.UnixTime(geos[0].FCCTime)
 	fmt.Println(baseFSTime.Format("2006-01-02, 15:04:05"))
 
@@ -148,11 +175,11 @@ func Merge(geos []data.GEOData, fccs []data.FCC, rtts *[]data.RTT) {
 		*rtts = append(*rtts, r)
 	}
 
-	for i, rec := range *rtts {
-		if i < 50 {
-			fmt.Printf("%#v\n", rec)
-		}
-	}
+	//for i, rec := range *rtts {
+	//	if i < 50 {
+	//		fmt.Printf("%#v\n", rec)
+	//	}
+	//}
 
 	fmt.Println("Count Concurrent ", len(*rtts))
 }

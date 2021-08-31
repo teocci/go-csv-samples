@@ -13,7 +13,7 @@ func UnixTime(gpsTime float32) time.Time {
 	return time.Unix(int64(sec), int64(dec*1e9))
 }
 
-func GenBaseDate() time.Time {
+func GenBaseDate(day int) time.Time {
 	t := time.Now()
-	return time.Date(2021, 8, 1, 13, 0, 0, 0, t.Location())
+	return time.Date(2021, 8, day, 13, 0, 0, 0, t.Location())
 }

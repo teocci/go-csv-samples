@@ -23,7 +23,7 @@ func CloseFile() func(f *os.File) {
 func LoadDataBuff(fn string) []byte {
 	f, err := os.Open(fn)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("LoadDataBuff:", err)
 	}
 	defer CloseFile()(f)
 

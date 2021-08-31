@@ -35,7 +35,7 @@ func initProcess() {
 	defer waitTilEnd()()
 
 	// open the first file
-	base := loadData(data.GEOPath)
+	base := loadData(data.GEODatPath)
 	defer closeFile()(base)
 
 	r := csv.NewReader(base)
@@ -95,13 +95,7 @@ func worker(c chan []string) {
 			// locks ensures sequential printing
 			// not a required for independent files
 			mu.Lock()
-			var i int
-			for _, p := range part {
-				if i < 10 {
-					fmt.Printf("%d -> %+v\n", i, p)
-				}
-				i = i + 1
-			}
+				fmt.Printf("%+v\n", part)
 			mu.Unlock()
 
 			return

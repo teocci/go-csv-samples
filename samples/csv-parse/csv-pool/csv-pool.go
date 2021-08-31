@@ -6,8 +6,10 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/teocci/go-csv-samples/src/csvmgr"
 	"io"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"sync"
@@ -22,7 +24,7 @@ func main() {
 // with Worker pools
 func initProcess() {
 	// open the first file
-	base := csvmgr.OpenFile(data.GEOPath)
+	base := csvmgr.OpenFile(data.GEODatPath)
 	defer csvmgr.CloseFile()(base)
 
 	csvReader := csv.NewReader(base)
@@ -66,8 +68,14 @@ func initProcess() {
 				fmt.Println("ERROR: ", err.Error())
 				break
 			}
-			for i, s := range rStr{
-				rStr[i] = strings.Trim(s, " ")
+			for i, s := range rStr {
+				if filepath.Ext(data.GEODatPath) == ".dat" {
+					rStr[i] = strings.Replace(rStr[i] , " ", ",", -1)
+				} else {
+					rStr[i] = strings.Trim(s, " ")
+				}
+
+				spew.Dump(rStr[i])
 			}
 
 			jobs <- rStr

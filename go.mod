@@ -3,6 +3,7 @@ module github.com/teocci/go-csv-samples
 go 1.16
 
 require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-pg/pg/v10 v10.10.4 // indirect
 	github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8 // indirect
 	github.com/jackc/pgx/v4 v4.13.0 // indirect
