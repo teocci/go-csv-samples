@@ -5,21 +5,24 @@ package main
 
 import (
 	"fmt"
-	gopg "github.com/go-pg/pg/v10"
-	"github.com/teocci/go-csv-samples/src/model"
-	"github.com/teocci/go-csv-samples/src/timemgr"
 	"log"
 	"path/filepath"
 	"runtime"
 	"sync"
 	"time"
 
+	gopg "github.com/go-pg/pg/v10"
 	"github.com/gocarina/gocsv"
 	"github.com/teocci/go-csv-samples/src/csvmgr"
 	"github.com/teocci/go-csv-samples/src/data"
+	"github.com/teocci/go-csv-samples/src/model"
+	"github.com/teocci/go-csv-samples/src/timemgr"
 )
 
-var db *gopg.DB
+var (
+	db                      *gopg.DB
+	baseFSTime, baseFCCTime time.Time
+)
 
 func main() {
 	var geos []data.GEOData
@@ -49,14 +52,22 @@ func main() {
 	db = model.Setup()
 	defer db.Close()
 
+	baseFSTime = timemgr.GenBaseDate()
+	baseFCCTime = timemgr.UnixTime(geos[0].FCCTime)
+	fmt.Println(baseFSTime.Format("2006-01-02, 15:04:05"))
+
 	fs := &model.FlightSession{
-		DroneID: 1,
-		Hash:    data.FNV64aS(time.Now().String()),
+		DroneID:    1,
+		Hash:       data.FNV64aS(baseFSTime.String()),
+		LastUpdate: baseFSTime,
 	}
 
-	_, err := db.Model(fs).Insert()
+	res, err := db.Model(fs).OnConflict("DO NOTHING").Insert()
 	if err != nil {
 		panic(err)
+	}
+	if res.RowsAffected() > 0 {
+		fmt.Println("FlightSession inserted")
 	}
 
 	Merge(geos, fccs, &rtts)
@@ -75,6 +86,8 @@ func Merge(geos []data.GEOData, fccs []data.FCC, rtts *[]data.RTT) {
 				if !ok {
 					return
 				}
+				currFCCTime := timemgr.UnixTime(job.FCCTime)
+				lastUpdate := baseFSTime.Add(currFCCTime.Sub(baseFCCTime))
 
 				fsr := &model.FlightSessionReading{
 					DroneID:         1,
@@ -90,12 +103,15 @@ func Merge(geos []data.GEOData, fccs []data.FCC, rtts *[]data.RTT) {
 					BatPercent:      job.BatPercent,
 					BatTemperature:  job.BatTemperature,
 					Temperature:     job.Temperature,
-					GPSTime:         timemgr.UnixTime(job.GPSTime),
+					LastUpdate:      lastUpdate,
 				}
-				_, err := db.Model(fsr).Insert()
+				_, err := db.Model(fsr).OnConflict("DO NOTHING").Insert()
 				if err != nil {
 					panic(err)
 				}
+				//if res.RowsAffected() > 0 {
+				//	fmt.Println("FlightSession inserted")
+				//}
 
 				results <- job
 			}
@@ -149,6 +165,7 @@ func findFCCData(geo data.GEOData, fccs []data.FCC, offset int) (int, *data.RTT)
 			return i, &data.RTT{
 				DroneID:         1,
 				FlightSessionID: 1,
+				FCCTime:         geo.FCCTime,
 				Lat:             geo.Lat,
 				Long:            geo.Long,
 				Alt:             geo.Alt,

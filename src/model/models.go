@@ -11,7 +11,7 @@ type FlightSession struct {
 	Hash        string    `json:"hash" csv:"hash" sql:"hash" pg:",unique,notnull"`
 	GPSStatus   float32   `json:"gps_status" csv:"gps_status" pg:"gps_status"`
 	DroneStatus float32   `json:"drone_status" csv:"drone_status" pg:"drone_status"`
-	ModifyDate  time.Time `json:"modify_date" csv:"modify_date" pg:"modify_date"`
+	LastUpdate  time.Time `json:"last_update" csv:"last_update" pg:"last_update"`
 }
 
 type FlightSessionReading struct {
@@ -29,5 +29,5 @@ type FlightSessionReading struct {
 	BatPercent      float32   `json:"battery_percentage" csv:"battery_percentage" pg:"battery_percentage"`
 	BatTemperature  float32   `json:"battery_temperature" csv:"battery_temperature" pg:"battery_temperature"`
 	Temperature     float32   `json:"temperature" csv:"temperature" pg:"temperature"`
-	GPSTime         time.Time `json:"modify_date" csv:"modify_date" pg:"modify_date"`
+	LastUpdate      time.Time `json:"last_update" csv:"last_update" pg:"last_update"`
 }

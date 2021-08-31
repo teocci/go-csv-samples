@@ -8,7 +8,12 @@ import (
 	"time"
 )
 
-func UnixTime(gpsTime float32) time.Time{
+func UnixTime(gpsTime float32) time.Time {
 	sec, dec := math.Modf(float64(gpsTime))
-	return time.Unix(int64(sec), int64(dec * 1e9))
+	return time.Unix(int64(sec), int64(dec*1e9))
+}
+
+func GenBaseDate() time.Time {
+	t := time.Now()
+	return time.Date(2021, 8, 1, 13, 0, 0, 0, t.Location())
 }

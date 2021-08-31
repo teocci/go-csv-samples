@@ -4,6 +4,10 @@
 package data
 
 const (
+	GEOFile = "GEOdata"
+	FCCFile = "FCC"
+	RTTFile = "RTT"
+
 	GEOPath = "./tmp/GEOdata.csv"
 	FCCPath = "./tmp/FCC.csv"
 
