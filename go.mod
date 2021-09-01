@@ -12,6 +12,7 @@ require (
 	github.com/yunabe/easycsv v0.0.2 // indirect
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf // indirect
+	golang.org/x/sys v0.0.0-20210831042530-f4d43177bf5e // indirect
 	golang.org/x/text v0.3.7 // indirect
+	trimmer.io/go-csv v0.0.0-20200711153937-212a98e14c36 // indirect
 )
