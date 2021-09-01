@@ -1,3 +1,7 @@
+// Package ascii_donut
+// Created by Teocci.
+// Author: teocci@yandex.com on 2021-09-01
+// Based on [Donut math: how donut.c works](https://www.a1k0n.net/2011/07/20/donut-math.html)
 package main
 
 import (
@@ -10,8 +14,8 @@ const (
 	theta_spacing = 0.07
 	phi_spacing   = 0.02
 
-	screen_width  = 210
-	screen_height = 90
+	screen_width  = 70
+	screen_height = 30
 
 	R1 = 1
 	R2 = 2
@@ -24,7 +28,7 @@ const (
 // is 3/4th of the way from the center to the side of the screen.
 // screen_width*3/8 = K1*(R1+R2)/(K2+0)
 // screen_width*K2*3/(8*(R1+R2)) = K1
-const K1 = screen_width * K2 * 3 / (20 * (R1 + R2))
+const K1 = screen_width * K2 * 3 / (18 * (R1 + R2))
 
 var (
 	output = make([][]rune, screen_width)
@@ -32,7 +36,7 @@ var (
 )
 
 func main() {
-	renderFrame(200, 200)
+	renderFrame(2000, 2000)
 }
 
 func renderFrame(a float64, b float64) {
@@ -52,7 +56,7 @@ func renderFrame(a float64, b float64) {
 	for i := range zBuff {
 		zBuff[i] = make([]float64, screen_height)
 	}
-
+	fmt.Printf("\x1b[2J")
 	// theta goes around the cross-sectional circle of a torus
 	for theta := float64(0); theta < 2*math.Pi; theta += theta_spacing {
 		// precompute sines and cosines of theta
@@ -116,7 +120,7 @@ func renderFrame(a float64, b float64) {
 	// now, dump output[] to the screen.
 	// bring cursor to "home" location, in just about any currently-used
 	// terminal emulation mode
-	//fmt.Printf("\x1b[H")
+	fmt.Printf("\x1b[H")
 	for j := 0; j < screen_height; j++ {
 		for i := 0; i < screen_width; i++ {
 			fmt.Printf("%c", output[i][j])
