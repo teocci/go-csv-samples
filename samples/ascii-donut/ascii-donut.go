@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/teocci/go-csv-samples/src/iolive"
 	"math"
+	"time"
 )
 
 const (
@@ -45,8 +46,12 @@ func main() {
 	// start listening for updates and render
 	writer.Start()
 
-	a, b = 1, 1
-	renderFrame(a, b)
+	for i := float64(0); i <= 100; i++ {
+		a, b = 0+0.7*i, 0+0.3*i
+		renderFrame(a, b)
+		time.Sleep(time.Millisecond * 80)
+	}
+
 
 	writer.Stop() // flush and stop rendering
 }
@@ -61,7 +66,7 @@ func renderFrame(a float64, b float64) {
 	}
 	for i := range output {
 		for _ = range output[i] {
-			output[i] = append(output[i], '\v')
+			output[i] = append(output[i], ' ')
 		}
 	}
 
@@ -69,8 +74,7 @@ func renderFrame(a float64, b float64) {
 		zBuff[i] = make([]float64, screenHeight)
 	}
 
-	fmt.Fprintf(writer, "\x1b[2J")
-
+	//_, _ = fmt.Fprintf(writer, "\x1b[2J")
 	// theta goes around the cross-sectional circle of a torus
 	for theta := float64(0); theta < 2*math.Pi; theta += thetaSpacing {
 		// precompute sines and cosines of theta
@@ -127,17 +131,17 @@ func renderFrame(a float64, b float64) {
 					// now we lookup the character corresponding to the
 					// luminance and plot it in our output:
 
-					fmt.Printf("(%d, %d) | %d\n", xp, yp, luminanceIndex)
+					//_, _ = fmt.Fprintf(writer, "(%d, %d) | %d\n", xp, yp, luminanceIndex)
 					output[xp][yp] = rune(luminance[luminanceIndex])
 				}
 			}
 		}
 	}
-	fmt.Printf("(luminance len: %d\n", len(luminance))
+	//_, _ = fmt.Fprintf(writer, "(luminance len: %d\n", len(luminance))
 	// now, dump output[] to the screen.
 	// bring cursor to "home" location, in just about any currently-used
 	// terminal emulation mode
-	_, _ = fmt.Fprintf(writer, "\x1b[H")
+	//_, _ = fmt.Fprintf(writer, "\x1b[H")
 	for j := 0; j < screenHeight; j++ {
 		for i := 0; i < screenWidth; i++ {
 			_, _ = fmt.Fprintf(writer, "%c", output[i][j])
