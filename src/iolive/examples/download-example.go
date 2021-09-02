@@ -1,0 +1,30 @@
+// Package examples
+// Created by RTT.
+// Author: teocci@yandex.com on 2021-Sep-02
+package main
+
+import (
+	"fmt"
+	"time"
+
+	"github.com/teocci/go-csv-samples/src/iolive"
+)
+
+func main() {
+	writer := iolive.New()
+
+	// start listening for updates and render
+	writer.Start()
+
+	for _, f := range [][]string{{"Foo.zip", "Bar.iso"}, {"Baz.tar.gz", "Qux.img"}} {
+		for i := 0; i <= 50; i++ {
+			_, _ = fmt.Fprintf(writer, "Downloading %s.. (%d/%d) GB\n", f[0], i, 50)
+			_, _ = fmt.Fprintf(writer.Newline(), "Downloading %s.. (%d/%d) GB\n", f[1], i, 50)
+			time.Sleep(time.Millisecond * 25)
+		}
+		_, _ = fmt.Fprintf(writer.Bypass(), "Downloaded %s\n", f[0])
+		_, _ = fmt.Fprintf(writer.Bypass(), "Downloaded %s\n", f[1])
+	}
+	_, _ = fmt.Fprintln(writer, "Finished: Downloaded 150GB")
+	writer.Stop() // flush and stop rendering
+}

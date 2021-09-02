@@ -8,6 +8,7 @@ require (
 	github.com/gocarina/gocsv v0.0.0-20210516172204-ca9e8a8ddea8 // indirect
 	github.com/jackc/pgx/v4 v4.13.0 // indirect
 	github.com/jszwec/csvutil v1.5.0 // indirect
+	github.com/mattn/go-isatty v0.0.13 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.3.4 // indirect
 	github.com/yunabe/easycsv v0.0.2 // indirect
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect

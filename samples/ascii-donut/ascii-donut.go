@@ -6,16 +6,17 @@ package main
 
 import (
 	"fmt"
+	"github.com/teocci/go-csv-samples/src/iolive"
 	"math"
 )
 
 const (
-	luminance     = ".,-~:;=!*#$@"
-	theta_spacing = 0.07
-	phi_spacing   = 0.02
+	luminance    = ".,-~:;=!*#$@"
+	thetaSpacing = 0.07
+	phiSpacing   = 0.02
 
-	screen_width  = 70
-	screen_height = 30
+	screenWidth  = 70
+	screenHeight = 30
 
 	R1 = 1
 	R2 = 2
@@ -26,17 +27,28 @@ const (
 // roughly at the edge of the torus, which is at x=R1+R2, z=0.  we
 // want that to be displaced 3/8ths of the width of the screen, which
 // is 3/4th of the way from the center to the side of the screen.
-// screen_width*3/8 = K1*(R1+R2)/(K2+0)
-// screen_width*K2*3/(8*(R1+R2)) = K1
-const K1 = screen_width * K2 * 3 / (18 * (R1 + R2))
+// screenWidth*3/8 = K1*(R1+R2)/(K2+0)
+// screenWidth*K2*3/(8*(R1+R2)) = K1
+const K1 = screenWidth * K2 * 3 / (18 * (R1 + R2))
 
 var (
-	output = make([][]rune, screen_width)
-	zBuff  = make([][]float64, screen_width)
+	output = make([][]rune, screenWidth)
+	zBuff  = make([][]float64, screenWidth)
+
+	a, b float64
+
+	writer *iolive.Writer
 )
 
 func main() {
-	renderFrame(2000, 2000)
+	writer = iolive.New()
+	// start listening for updates and render
+	writer.Start()
+
+	a, b = 1, 1
+	renderFrame(a, b)
+
+	writer.Stop() // flush and stop rendering
 }
 
 func renderFrame(a float64, b float64) {
@@ -45,26 +57,28 @@ func renderFrame(a float64, b float64) {
 	cosB, sinB := math.Cos(b), math.Sin(b)
 
 	for i := range output {
-		output[i] = make([]rune, screen_height)
+		output[i] = make([]rune, screenHeight)
 	}
 	for i := range output {
 		for _ = range output[i] {
-			output[i] = append(output[i], ' ')
+			output[i] = append(output[i], '\v')
 		}
 	}
 
 	for i := range zBuff {
-		zBuff[i] = make([]float64, screen_height)
+		zBuff[i] = make([]float64, screenHeight)
 	}
-	fmt.Printf("\x1b[2J")
+
+	fmt.Fprintf(writer, "\x1b[2J")
+
 	// theta goes around the cross-sectional circle of a torus
-	for theta := float64(0); theta < 2*math.Pi; theta += theta_spacing {
+	for theta := float64(0); theta < 2*math.Pi; theta += thetaSpacing {
 		// precompute sines and cosines of theta
 		costheta := math.Cos(float64(theta))
 		sintheta := math.Sin(float64(theta))
 
 		// phi goes around the center of revolution of a torus
-		for phi := float64(0); phi < 2*math.Pi; phi += phi_spacing {
+		for phi := float64(0); phi < 2*math.Pi; phi += phiSpacing {
 			// precompute sines and cosines of phi
 			cosphi := math.Cos(phi)
 			sinphi := math.Sin(phi)
@@ -83,19 +97,19 @@ func renderFrame(a float64, b float64) {
 
 			// x and y projection.  note that y is negated here, because y
 			// goes up in 3D space but down on 2D displays.
-			xp := (int)(screen_width/2 + K1*ooz*x)
-			yp := (int)(screen_height/2 - K1*ooz*y)
+			xp := (int)(screenWidth/2 + K1*ooz*x)
+			yp := (int)(screenHeight/2 - K1*ooz*y)
 			if xp < 0 {
 				xp = 0
 			}
-			if xp > screen_width-1 {
-				xp = screen_width - 1
+			if xp > screenWidth-1 {
+				xp = screenWidth - 1
 			}
 			if yp < 0 {
 				yp = 0
 			}
-			if yp > screen_height-1 {
-				yp = screen_height - 1
+			if yp > screenHeight-1 {
+				yp = screenHeight - 1
 			}
 
 			// calculate luminance.  ugly, but correct.
@@ -112,19 +126,22 @@ func renderFrame(a float64, b float64) {
 					// luminanceIndex is now in the range 0..11 (8*sqrt(2) = 11.3)
 					// now we lookup the character corresponding to the
 					// luminance and plot it in our output:
+
+					fmt.Printf("(%d, %d) | %d\n", xp, yp, luminanceIndex)
 					output[xp][yp] = rune(luminance[luminanceIndex])
 				}
 			}
 		}
 	}
+	fmt.Printf("(luminance len: %d\n", len(luminance))
 	// now, dump output[] to the screen.
 	// bring cursor to "home" location, in just about any currently-used
 	// terminal emulation mode
-	fmt.Printf("\x1b[H")
-	for j := 0; j < screen_height; j++ {
-		for i := 0; i < screen_width; i++ {
-			fmt.Printf("%c", output[i][j])
+	_, _ = fmt.Fprintf(writer, "\x1b[H")
+	for j := 0; j < screenHeight; j++ {
+		for i := 0; i < screenWidth; i++ {
+			_, _ = fmt.Fprintf(writer, "%c", output[i][j])
 		}
-		fmt.Printf("%c", '\n')
+		_, _ = fmt.Fprintf(writer, "%c", '\n')
 	}
 }
