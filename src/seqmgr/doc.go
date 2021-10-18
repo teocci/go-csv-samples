@@ -1,4 +1,4 @@
-// Package bootseq
+// Package seqmgr
 // Created by Teocci.
 // Author: teocci@yandex.com on 2021-Aug-28
 // Desc: this package provides a general-purpose boot sequence manager with separate
