@@ -43,12 +43,12 @@ func BenchmarkFCCUnmarshal(b *testing.B) {
 	}{
 		{
 			desc:    "GEOData",
-			records: "./tmp/GEOdata.csv",
+			records: "../../tmp/GEOdata.csv",
 			isFCC:   false,
 		},
 		{
 			desc:    "FCC",
-			records: "./tmp/FCC.csv",
+			records: "../../tmp/FCC.csv",
 			isFCC:   true,
 		},
 	}
@@ -128,6 +128,11 @@ func BenchmarkFCCUnmarshal(b *testing.B) {
 		b.Run(t.desc, func(b *testing.B) {
 			for _, f := range fixture {
 				b.Run(f.desc, func(b *testing.B) {
+					//dir, err := os.Getwd()
+					//if err != nil {
+					//	b.Fatal(err)
+					//}
+					//b.Log(dir)
 					data := genData(f.records)
 					b.ReportAllocs()
 					b.ResetTimer()
@@ -141,7 +146,7 @@ func BenchmarkFCCUnmarshal(b *testing.B) {
 }
 
 func genData(f string) []byte {
-	file, err := os.Open(f)
+	var file, err = os.Open(f)
 	if err != nil {
 		log.Fatal(err)
 	}

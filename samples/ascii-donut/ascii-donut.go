@@ -6,9 +6,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/teocci/go-csv-samples/src/iolive"
 	"math"
 	"time"
+
+	"github.com/teocci/go-csv-samples/src/iolive"
 )
 
 const (
